@@ -1,0 +1,65 @@
+\documentclass[a4paper]{article}
+\usepackage[margin=2cm]{geometry}
+\usepackage{graphicx, subfig}
+
+
+\usepackage[british]{babel}
+\usepackage{enumerate}
+\begin{document}
+\title{ECON 418 || Assignment (Exercise Problem 5.12)}
+\author{SD}
+\maketitle
+
+\section{ Problem 5.12}
+The regression model of the question:\\
+$PRICE= \beta_1+ \beta_2QUAN+ \beta_3QUAL+ \beta_4TREND+ \epsilon$\\
+
+\noindent{\textit{(a) What signs would you expect on the coefficients $\beta_2$, $\beta_3$, and $\beta_4$}?}\\
+
+\noindent{Ans: The expected sign of $\beta_2$ can be considered as negative as sales increase, the price per unit is supposed to decrease, which implies a discount for larger amount of sales. The sign of $\beta_3$ is considered as positive. Because the purer the cocaine, the price  would be more. The sign for $\beta_4$ will depend on how demand and supply which is not fixed over time.}\\
+
+\noindent{\textit{(b) Use your computer software to estimate the equation. Report the results and
+interpret the coefficient estimates. Have the signs turned out as you expected?}}\\
+<<echo=TRUE, fig.height=3>>=
+## Book: Prin. of Econometrics by Hall, 4 e
+setwd("/Users/subasishdas1/Copy/web/git_repo/hw/Econometrics/Econ HW 7")
+cocaine <- read.csv("Cocaine.csv")
+head(cocaine)
+dim(cocaine)
+cocaine_lm <- lm(price~ quant+qual+trend, data= cocaine)
+summary(cocaine_lm)
+@
+\noindent{The regression model of the question:\\
+
+$PRICE= 90.84669 -0.0599QUAN+ 0.1162QUAL - 2.3545TREND+ \epsilon $\\
+
+\noindent{The estimated values of $\beta_2$, $\beta_3$, and $\beta_4$ are $-0.0599$ , 0.1162 and $-2.3546$ , respectively. The first value imply that as quantity (number of grams/sale) increases per unit, the price will go down by 0.0599. Also, as the quality of cocaine increases per unit the price would go up by 0.1162. As time increases by one year, the price would decrease by 2.3546. All of the signs turn out according to the general expectations (here, $\beta_4$ implies that supply has been increasing faster than demand.)}\\
+
+\noindent{\textit{(c) What proportion of variation in cocaine price is explained jointly by variation in
+quantity, quality, and time?}}\\
+
+\noindent{Ans: The proportion of variation in cocaine price explained by the variation in quantity, quality and time is 0.5097 (value of multiple R-square.)}\\
+
+\noindent{\textit{(d) It is claimed that the greater the number of sales, the higher the risk of getting
+caught. Thus, sellers are willing to accept a lower price if they can make sales in larger quantities. Set up $H_0$ and $H_1$ that would be appropriate to test this hypothesis. Carry out the hypothesis test.}\\
+
+\noindent{Ans: For this hypothesis we test:\\
+$H_0: \beta_2 \ge 0$ \\
+$H_1: \beta_2 < 0.$\\
+The calculated t-value is -5.892 . We reject $H_0$ if the calculated t is less than the critical value = -1.675. In this case, the calculated t is less than the critical t value. So, we can reject $H_0$ and it can be concluded that sellers are willing to accept a lower price if they can make sales in larger quantities.}\\
+
+
+\noindent{\textit{(e) Test the hypothesis that the quality of cocaine has no influence on price against
+the alternative that a premium is paid for better-quality cocaine.} \\
+
+\noindent{Ans: For this hypothesis we test:\\
+$H_0: \beta_3 \le 0 $\\
+$H_1: \beta_3 > 0.$\\
+The calculated t-value is 0.5717. At $\alpha = 0.05$, we can reject $H_0$ if the calculated t is greater than 1.675. In this case, the calculated t is not greater than the critical t. So, we fail to reject $H_0$. We don't have enough evidence to conclude that a premium is paid for better quality cocaine.}\\
+
+\noindent{\textit{(f) What is the average annual change in the cocaine price? Can you suggest why price might be changing in this direction?} \\
+
+\noindent{Ans: The average annual change in the cocaine price is given by the value of $b_4$ = -2.3546 . It has a negative sign which suggests the price would decrease over time. A possible reason for this trend is the development of modern cost-effective technology for cocaine production by which the suppliers can produce more at the same cost.}\\
+
+
+\end{document}

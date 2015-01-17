@@ -1,0 +1,191 @@
+\documentclass[a4paper]{article}
+\usepackage[margin=2cm]{geometry}
+\usepackage{graphicx, subfig}
+
+
+\usepackage[british]{babel}
+\usepackage{enumerate}
+\begin{document}
+\title{ECON 418 || Assignment 4 (Problem 2.15)}
+\author{SD}
+\maketitle
+
+\section{ Problem 2.15}
+
+(a)
+
+<<echo=TRUE, fig.height=3>>=
+
+### Book: Principles of Econometrics by Carter Hill, 4th e
+setwd("/Users/subasishdas1/Copy/web/git_repo/hw/Econometrics/Econ HW 4")
+cps4_small <- read.csv("cps4_small.csv")
+head(cps4_small,n=3)
+cps4_small <- cps4_small[-c(3,4,5,7)]
+head(cps4_small,n=3)
+
+# Histogram of Wage
+library(ggplot2)
+ggplot(cps4_small, aes(x=wage)) + geom_histogram(binwidth=5, colour="black", fill="white")
+library(psych)
+describe(cps4_small$wage)
+@
+
+The above plot is skewed to the right. It indicates that majority of the observations are in between the hourly wages of 5 to 40. A smaller number of observations is seen with an hourly wage above 40. The average was is 20.62 dollars per hour. The maximum earned in this sample is 76.39 dollars per hour and the lowest wage is 1.97 dollars per hour. The descriptive statistics also give median, standard deviation, range, kutosis and skewness of the wage.
+
+
+<<echo=TRUE, fig.height=4>>=
+# Histogram of Education
+library(ggplot2)
+ggplot(cps4_small, aes(x=educ)) + geom_histogram(binwidth=1, colour="black", fill="white")
+library(psych)
+describe(cps4_small$educ)
+@
+
+The peak at 12 years of education indicate that higher number of high school graduate. There are few observations which are less than 12 which represents high school dropout. The spike at 16 years describes the students with a four year college degree. The middle two values indicate two years of community college level degree.The rest of the histotrogram (above 16) indicate  Masters and PhD holders.The descriptive statistics also give median, standard deviation, range, kutosis and skewness of the wage.\\
+
+
+
+(b)
+
+<<echo=TRUE, fig.height=4>>=
+lm1 <- lm(wage~educ , data= cps4_small)
+summary(lm1)
+@
+
+The estimated model:\\
+
+\textbf{WAGE= -6.7103+ 1.9803EDUC}\\
+
+The coefficient 1.9803 indicates the estimated increase in the expected hourly wage rate per year of education. The negative value of intercept represents the estimated wage rate of a worker with zero years of education. This value is meaningless as it is not possible to have a negative hourly wage rate.\\
+
+
+(c)
+<<echo=TRUE, fig.height=4>>=
+residual = resid(lm1)
+qplot(cps4_small$educ, residual, xlab="Education")
+@
+
+The residuals are plotted against education above. There is a pattern evident; as EDUC increases, the magnitude of the residuals also increases. It implies that the error
+variance is greater for larger values of EDUC. Violation of assumption SR3 is evident here. We know that if the assumptions (SR1-SR5) hold, no particular pattern should be evident in the residuals.\\
+
+
+(d)
+<<echo=TRUE, fig.height=4>>=
+male <- cps4_small[cps4_small[, "female"]<1, ]
+head(male,n=3)
+
+female <- cps4_small[cps4_small[, "female"]>0, ]
+head(female,n=3)
+
+white1 <- cps4_small[cps4_small[, "black"]<1, ]
+white <- white1[white1[, "asian"]<1, ]
+head(white,n=3)
+
+black1 <- cps4_small[cps4_small[, "black"]>0, ]
+black <- black1[black1[, "asian"]<1, ]
+head(black,n=3)
+
+
+lm2 <- lm(male$wage~ male$educ)
+summary(lm2)
+
+lm3 <- lm(female$wage~ female$educ)
+summary(lm3)
+
+lm4 <- lm(white$wage~ white$educ)
+summary(lm4)
+
+lm5 <- lm(black$wage~ black$educ)
+summary(lm5)
+@
+
+The estimated model for Male: \textbf{WAGE= -3.0545+ 1.8753EDUC}\\
+The estimated model for Female: \textbf{WAGE= -14.1680+ 2.3575EDUC}\\
+The estimated model for Black: \textbf{WAGE= -15.0859+ 2.4491EDUC}\\
+The estimated model for White: \textbf{WAGE= -6.5507+ 1.9919EDUC}\\
+
+In filtering white and black popular, we filtered out those who are asians. From the esimated models, it's visible that an extra year of education increases the wage rate for a black worker than for a white worker. Similar trend is visible in female workers case. Their wage rate increases with an extra year of education more than male worker.\\
+
+(e)
+
+<<echo=TRUE, fig.height=4>>=
+lmfit <- lm(wage~I(educ ^2), data= cps4_small)
+summary(lmfit)
+@
+
+The estimated quadratic model:\\
+
+WAGE= 6.082831+ $0.073489EDUC^2$\\
+
+Marginal effect:\\
+
+SLOPE= $2(0.073489)EDUC$\\
+
+A person with 12 years of education has the estimated marginal effect of an additional
+year of education on expected wage is:\\
+
+SLOPE= 2*0.073489*12= 1.7637\\
+
+A person with 14 years of education has the estimated marginal effect of an additional
+year of education on expected wage is:\\
+
+SLOPE= 2*0.073489*14= 2.0577\\
+
+The linear estimated model indicated that an additional year of education is expected to increase wage by dollar 1.98 regardless of the number of years of education attained. So, the rate of change is pretty much constant. On the other hand, the quadratic model implies that the effect of an additional year of education on wage increases with the level of education.\\
+
+(f)
+
+<<echo=TRUE, fig.height=4>>=
+p <- qplot(educ, wage, data = cps4_small)
+p + stat_smooth(method = "lm", formula = y ~ x, size = 1) + 
+stat_smooth(method = "lm", formula = y ~ I(x^2), size = 1)
+@
+
+The quadratic model seems to fit the data better than the linear model equation.\\
+
+(g)
+
+<<echo=TRUE, fig.height=4>>=
+m <- log(cps4_small$wage)
+cps4_small$logwage <- log(cps4_small$wage)
+head(cps4_small)
+ggplot(cps4_small, aes(x=logwage)) + 
+geom_histogram(binwidth=0.2, colour="black", fill="white")
+@
+
+From the above plot, the histogram of log(WAGE) is more symmetrical and bell-shaped than the histogram of WAGE.\\
+
+(h)
+
+<<echo=TRUE, fig.height=4>>=
+lm6 <- lm(logwage~educ , data= cps4_small)
+summary(lm6)
+@
+
+The estimated model:\\
+
+\textbf{log(WAGE)= 1.609444+ 0.090408EDUC}\\
+
+Estimated marginal effect of education on WAGE is:\\
+
+dWAGE/dEDUC=const* WAGE\\
+
+For workers with 12  years of education the predicted wage rate:\\
+
+$WAGE_12=exp(1.60944 + 0.090408* 12)= 14.796$\\
+
+For workers with 14  years of education the predicted wage rate:\\
+
+$WAGE_14=exp(1.60944 + 0.090408* 14)= 17.728$\\
+
+The marginal effects at these values are 1.34 and 1.60 respectively.\\
+
+<<echo=TRUE, fig.height=4>>=
+p <- qplot(educ, wage, data = cps4_small)
+p + stat_smooth(method = "lm", formula = y ~ x, size = 1) + 
+stat_smooth(method = "lm", formula = y ~ exp(x), size = 1)
+
+@
+
+For the linear model, effect of education was estimated to be dollar 1.98. For the quadratic model, the corresponding marginal effect estimates are dollar 1.76 and dollar 2.06 respectively. The marginal effects of the log-linear model are lower.\\
+\end{document}
